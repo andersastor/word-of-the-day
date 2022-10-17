@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="jumbotron">
+    <p>Word of the day: {{ date }}</p>
+    <h1>{{ word.word }}</h1>
+    <p class="lead"><i>{{ word.wordclass}}</i> | {{ word.pronounciation }}</p>
+    <p>{{ word.definition }}</p>
+</div>
+
+{% endblock %}
