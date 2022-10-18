@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import render_template
-from datetime import date
+from datetime import datetime, date, timedelta
 from bs4 import BeautifulSoup
 import requests
 
@@ -13,11 +13,13 @@ class WordOfTheDay:
     pronounciation = ''
     definition = ''
 
-def scrape_merriam_webster():
-    source = requests.get('https://www.merriam-webster.com/word-of-the-day').text
+word = WordOfTheDay()
+today = date.today()
+
+def scrape_merriam_webster(date):
+    source = requests.get('https://www.merriam-webster.com/word-of-the-day/' + date.strftime("%Y-%m-%d")).text
     scrape = BeautifulSoup(source, features='html.parser')
 
-    word = WordOfTheDay()
     word.word = scrape.find('h1').text
     word.wordclass = scrape.find('span', class_='main-attr').text
     word.pronounciation = scrape.find('span', class_='word-syllables').text
@@ -25,14 +27,33 @@ def scrape_merriam_webster():
 
     return word
 
+def handle_date(inputdate):
+    if inputdate is None:
+        inputdate = today
+    else:
+        try: 
+            inputdate = datetime.strptime(inputdate, "%Y-%m-%d").date()
+        except:
+            inputdate = today
+
+    if inputdate > today:
+        inputdate = today
+    return inputdate
+
 @app.route('/')
-def word_of_the_day():
-    word = scrape_merriam_webster()
+@app.route('/<inputdate>')
+def word_of_the_day(inputdate=None):
+    inputdate = handle_date(inputdate)
+
+    word = scrape_merriam_webster(inputdate)
+
     return render_template(
         'index.html',
-        date=date.today().strftime("%B %d, %Y"),
-        word=word
+        date=inputdate,
+        word=word,
+        delta=timedelta(1)
     )
+
 
 if __name__ == '__main__':
     import os

@@ -1,10 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="jumbotron">
-    <p>Word of the day: {{ date }}</p>
+<div>
+    <a href="/{{ date - delta }}">Previous</a>
+    <a href="/">Today</a>
+    <a href="/{{ date + delta }}">Next</a>
+
+    <p>Word of the day: {{ date.strftime("%B %d, %Y") }}</p>
     <h1>{{ word.word }}</h1>
-    <p class="lead"><i>{{ word.wordclass}}</i> | {{ word.pronounciation }}</p>
+    <p><i>{{ word.wordclass}}</i> | {{ word.pronounciation }}</p>
     <p>{{ word.definition }}</p>
 </div>
 
